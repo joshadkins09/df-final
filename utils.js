@@ -16,11 +16,11 @@ function sum_regions(d)
         if (d[i].region == "") continue;
         if (buf[d[i].region] == undefined)
         {
-            buf[d[i].region] = d[i]['1991'];
+            buf[d[i].region] = d[i][1991];
         }
         else
         {
-            buf[d[i].region] += d[i]['1991'];
+            buf[d[i].region] += d[i][1991];
         }
     }
     summed = [];
@@ -29,6 +29,48 @@ function sum_regions(d)
         summed.push({'name': key, 'value': buf[key]});
     }
     return summed;
+}
+
+function other(d) {
+    out = {};
+    for (var y = 1990; y < 2016; ++y)
+    {
+        out[y] = {
+            // "Latin America & Caribbean": 0,
+            // "South Asia": 0,
+            // "Sub-Saharan Africa": 0,
+            // "Europe & Central Asia": 0,
+            // "Middle East & North Africa": 0,
+            // "East Asia & Pacific": 0,
+            "North America": 0
+        };
+    }
+    for (var i = 0; i < d.length; ++i)
+    {
+        for (var y = 1990; y < 2016; ++y)
+        {
+            if ([d[i].region] != "")
+            {
+                out[y][d[i].region] += d[i][y];
+            }
+        }
+    }
+
+    foo = [];
+    for (var key in out)
+    {
+        foo.push({
+            "year": key,
+            // "Latin America & Caribbean": out[key]["Latin America & Caribbean"],
+            // "South Asia": out[key]["South Asia"],
+            // "Sub-Saharan Africa": out[key]["Sub-Saharan Africa"],
+            // "Europe & Central Asia": out[key]["Europe & Central Asia"],
+            // "Middle East & North Africa": out[key]["Middle East & North Africa"],
+            // "East Asia & Pacific": out[key]["East Asia & Pacific"],
+            "value": out[key]["North America"]
+        });
+    }
+    return foo;
 }
 
 function filter_region(d, r)

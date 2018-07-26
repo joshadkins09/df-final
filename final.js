@@ -5,21 +5,23 @@ var svg = d3.select("svg"),
     height = +svg.attr("height") - margin.top - margin.bottom;
 
 var x = d3.scaleBand().rangeRound([0, width]).padding(0.1);
-var y = d3.scaleLog().rangeRound([height, 0]);
+var y = d3.scaleLinear().rangeRound([height, 0]);
+
+var line = d3.line()
+    .x(function(d) { return x(d.year); })
+    .y(function(d) { return y(d.value); });
 
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
 d3.json('data.json', function(d) {
-    data = sum_regions(d);
+    // data = sum_regions(d);
+    data = other(d);
     console.log(data);
 
-    x.domain(data.map(function(d) { return d.name; }));
-    y.domain([100000, d3.max(data, function(d) { return d.value; })]);
-    // y.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
-    console.log(x);
-    console.log(y);
+    x.domain(data.map(function(d) { return d.year; }));
+    y.domain([6500000, d3.max(data, function(d) { return d.value; })]);
+    // y.domain([6500000, d3.max(data, function(d) { return d.value; })]);
 
     g.append("g")
         .attr("class", "axis axis--x")
@@ -28,7 +30,7 @@ d3.json('data.json', function(d) {
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(y));
     /* .append("text")
      * .attr("transform", "rotate(-90)")
      * .attr("y", 6)
@@ -36,13 +38,22 @@ d3.json('data.json', function(d) {
      * .attr("text-anchor", "end")
      * .text("Frequency");*/
 
-    g.selectAll(".bar")
-        .data(data)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", function(d) { return x(d.name); })
-        .attr("y", function(d) { return y(d.value); })
-        .attr("width", x.bandwidth())
-        .attr("height", function(d) { return height - y(d.value); });
+    // g.selectAll(".bar")
+    //     .data(data)
+    //     .enter().append("rect")
+    //     .attr("class", "bar")
+    //     .attr("x", function(d) { return x(d.name); })
+    //     .attr("y", function(d) { return y(d.value); })
+    //     .attr("width", x.bandwidth())
+    //     .attr("height", function(d) { return height - y(d.value); });
+
+    g.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 1.5)
+        .attr("d", line);
 
 });
