@@ -8,7 +8,7 @@ var parseDate = d3.time.format("%Y").parse;
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
-var y = d3.scale.linear().range([height, 0]);
+var y = d3.scale.log().range([height, 0]);
 
 // Define the axes
 var xAxis = d3.svg.axis().scale(x)
@@ -50,15 +50,12 @@ d3.json("data.json", function(error, d) {
     console.log(data);
 
     // Scale the range of the data
-    x.domain([parseDate("1990"), parseDate("2015")]);
-    // y.domain([d3.min(data, function(d) { return d.price; }),
-    //           d3.max(data, function(d) { return d.price; })]);
-    y.domain([1000000,
-              d3.max(data, function(d) { return d.price; })]);
+    x.domain(d3.extent(data, function(d) { return d.date; }));
+    y.domain(d3.extent(data, function(d) { return d.price; }));
 
     // Nest the entries by symbol
     var dataNest = d3.nest()
-        .key(function(d) {return d.symbol;})
+        .key(function(d) {return d.country_code;})
         .entries(data);
 
     // Loop through each symbol / key

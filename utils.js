@@ -120,14 +120,16 @@ function expand_data(d) {
         var e = d[i];
         for (var j = 1990; j < 2016; ++j)
         {
-            if (e.country_code == "USA" || e.country_code == "CAN") {
+            if (e.region == "Europe & Central Asia") {
                 // console.log(e.country_name + " " + j + " " + e[j]);
-                out.push({"date": '' + j,
-                          "price": e[j],
-                          "income_group": e.income_group,
-                          "region": e.region,
-                          "country_name": e.country_name,
-                          "country_code": e.country_code});
+                out.push({
+                    "country_code": e.country_code,
+                    "date": '' + j,
+                          "price": e[j]
+                          // "income_group": e.income_group,
+                          // "region": e.region,
+                          // "country_name": e.country_name,
+                         });
                 }
         }
     }
