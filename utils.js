@@ -109,10 +109,27 @@ function in_region(r, region)
     return has_region(r) && r.region == region;
 }
 
-var foo = [];
-d3.json('data.json', function(data) {
-    foo = data;
-    /* for (var i = 0; i < data.length; i++) {
-     * console.log(data[i].tablename);
-     * }*/
-});
+// var foo = [];
+// d3.json('data.json', function(data) {
+// });
+
+function expand_data(d) {
+    out = [];
+    for (var i = 0; i < d.length; ++i)
+    {
+        var e = d[i];
+        for (var j = 1990; j < 2016; ++j)
+        {
+            if (e.country_code == "USA" || e.country_code == "CAN") {
+                // console.log(e.country_name + " " + j + " " + e[j]);
+                out.push({"date": '' + j,
+                          "price": e[j],
+                          "income_group": e.income_group,
+                          "region": e.region,
+                          "country_name": e.country_name,
+                          "country_code": e.country_code});
+                }
+        }
+    }
+    return out;
+}
