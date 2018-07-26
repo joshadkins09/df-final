@@ -5,7 +5,7 @@ var svg = d3.select("svg"),
     height = +svg.attr("height") - margin.top - margin.bottom;
 
 var x = d3.scaleBand().rangeRound([0, width]).padding(0.1);
-var y = d3.scaleLinear().rangeRound([height, 0]);
+var y = d3.scaleLog().rangeRound([height, 0]);
 
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -16,8 +16,8 @@ d3.json('data.json', function(d) {
     console.log(data);
 
     x.domain(data.map(function(d) { return d.name; }));
-    /* y.domain([0, d3.max(data, function(d) { return d.value; })]);*/
-    y.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
+    y.domain([100000, d3.max(data, function(d) { return d.value; })]);
+    // y.domain([d3.min(data, function(d) { return d.value; }), d3.max(data, function(d) { return d.value; })]);
     console.log(x);
     console.log(y);
 
