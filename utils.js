@@ -60,7 +60,7 @@ function other(d) {
     for (var key in out)
     {
         foo.push({
-            "year": key,
+            "date": key,
             // "Latin America & Caribbean": out[key]["Latin America & Caribbean"],
             // "South Asia": out[key]["South Asia"],
             // "Sub-Saharan Africa": out[key]["Sub-Saharan Africa"],
@@ -137,9 +137,10 @@ function expand_data(d, r) {
                 var p = +e[j];
                 var v = 100 * (n - p) / n;
                 // console.log(n + ' ' + p + " " + v);
+                var date = parseDate('' + j);
                 out.push({
                     "country_code": e.country_code,
-                    "date": d.date = parseDate('' + j),
+                    "date": date,
                     "price": v
                           // "income_group": e.income_group,
                           // "region": e.region,
