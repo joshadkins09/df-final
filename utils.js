@@ -113,19 +113,34 @@ function in_region(r, region)
 // d3.json('data.json', function(data) {
 // });
 
-function expand_data(d) {
-    out = [];
+function by_country(d) {
+    var out = {};
+    for (var key in d) {
+        var e = d[key];
+        out[e.country_code] = e;
+    }
+    return out;
+}
+
+function expand_data(d, r) {
+    var out = [];
+    var bc = by_country(d);
+    // console.log(by_country(d));
     for (var i = 0; i < d.length; ++i)
     {
         var e = d[i];
         for (var j = 1990; j < 2016; ++j)
         {
-            if (e.region == "Europe & Central Asia") {
+            if (e.region == r) {
                 // console.log(e.country_name + " " + j + " " + e[j]);
+                var n = +bc[e.country_code][1990];
+                var p = +e[j];
+                var v = 100 * (n - p) / n;
+                // console.log(n + ' ' + p + " " + v);
                 out.push({
                     "country_code": e.country_code,
-                    "date": '' + j,
-                          "price": e[j]
+                    "date": d.date = parseDate('' + j),
+                    "price": v
                           // "income_group": e.income_group,
                           // "region": e.region,
                           // "country_name": e.country_name,
@@ -135,3 +150,4 @@ function expand_data(d) {
     }
     return out;
 }
+
