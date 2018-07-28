@@ -25,6 +25,11 @@ var svg = d3.select("body")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+// Define the div for the tooltip
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 // var fobj = {
 //     'region': {
 //         'enable': true,
@@ -52,43 +57,16 @@ var svg = d3.select("body")
 
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
-    var region = "Latin America & Caribbean";
+    var region = "North America";
     var df = data.filter(function(e) { return e.region === region; });
 
-    var controls = d3.select('body').append('div');
-    controls.append('div')
-        .append('select')
-        .style('margin-top', '50')
-        .style('margin-left', '75')
-        .on('change', function(c) {
-            var index = this.options.selectedIndex;
-            update_region(index);
-        })
-        .selectAll('option')
-        .data(d3.nest().key(function(d) { return d.region; }).entries(data))
-        .enter()
-        .append('option')
-        .attr('value',function (d) { return d.key; })
-        .text(function (d) { return d.key; });
-
-    // var slidecontainer = controls.append('div')
-    //     .attr('class', 'slidecontainer');
-
-    // var mx = d3.max(df, function(d) { return d.value; });
-    // slidecontainer.append('input')
-    //     .on('change', function (c) { console.log(this.value); })
-    //     .attr('type', 'range')
-    //     .attr('min', '1')
-    //     .attr('max', '' + mx)
-    //     .attr('value', '' + mx / 2)
-    //     .attr('class', 'slider')
-    //     .attr('id', 'myRange');
+    add_controls(data, region);
 
     var color = d3.scale.category10();   // set the colour scale
     set_domain(x, y, df);
     remove();
     add_axes();
-    write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, 0);
+    write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color);
 });
 
 function update_region(index) {
@@ -102,7 +80,6 @@ function update_region(index) {
         set_domain(x, y, df);
         remove();
         add_axes();
-        write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, index);
-
+        write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color);
     });
 }

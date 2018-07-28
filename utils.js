@@ -13,34 +13,54 @@ function remove() {
     svg.select('.y_axis').remove();
 }
 
-function write_lines(nest, color, index) {
-    nest.forEach(function(k, v) {
-        svg.append("path")
-            .attr("class", "line")
-            .style("stroke", function() {
-                return nest.color = color(k.key); })
-            .attr("id", 'line_'+k.key)
-            .attr("d", priceline(k.values));
+function write_lines(nest, color) {
+    lines = svg.selectAll('.line')
+        .data(nest);
 
-        svg.append("text")
-            .text(k.key)
-            .attr("x", function(d) {
-                mult = Math.floor(v * 50 / width);
-                return v*49.1 - width*mult;
-            })
-            .attr("y", function(d) {
-                mult = Math.floor(v * 51 / width) + 1;
-                return height + margin.top + mult*20; })
-            .attr("class", "legend")
-            .attr("id", "legend_item_"+k.key)
-            .style("fill", color(k.key))
-            .on("click", function(){
-                var line = svg.select('#line_'+k.key);
-                var op = flip(line.style('opacity'));
-                line.style('opacity', op);
-                this.style.opacity = (op == 1) ? 1 : 0.5;
-	          });
-    });
+    lines.enter()
+        .append("path")
+        .attr("class", "line")
+        .style("stroke", function(k) {
+            return color(k.key); })
+        .style('stroke-width', '3')
+        .attr("id", function (k) {
+            return 'line_'+k.key; })
+        .attr("d", function(k) { return priceline(k.values); })
+        .on("mouseover", function(d) {
+            console.log(d);
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div.html('<p>' + d.key + '</p>')
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function(d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+
+
+    legends = svg.selectAll('.legend').data(nest);
+    legends.enter().append("text")
+        .text(function(k) { return k.key; })
+        .attr("x", function(d, i) {
+            mult = Math.floor(i * 50 / width);
+            return i*49.1 - width*mult;
+        })
+        .attr("y", function(d, i) {
+            mult = Math.floor(i * 51 / width) + 1;
+            return height + margin.top + mult*20; })
+        .attr("class", "legend")
+        .attr("id", function(k) { return "legend_item_"+k.key; })
+        .style("fill", function(k) { return color(k.key); })
+        .on("click", function(k){
+            var line = svg.select('#line_'+k.key);
+            var op = flip(line.style('opacity'));
+            line.style('opacity', op);
+            this.style.opacity = (op == 1) ? 1 : 0.5;
+	      });
 }
 
 function set_domain(x, y, df) {
@@ -57,4 +77,39 @@ function add_axes() {
     svg.append("g")
         .attr("class", "y_axis")
         .call(yAxis);
+}
+
+function add_controls(data, region) {
+    var controls = d3.select('body').append('div');
+    controls.append('div')
+        .append('select')
+        .attr('id', 'region_select')
+        .style('margin-top', '50')
+        .style('margin-left', '75')
+        .on('change', function(c) {
+            var index = this.options.selectedIndex;
+            update_region(index);
+        })
+        .selectAll('option')
+        .data(d3.nest().key(function(d) { return d.region; }).entries(data))
+        .enter()
+        .append('option')
+        .attr('value',function (d) { return d.key; })
+        .text(function (d) { return d.key; });
+
+    controls.select('#region_select').property('value', region);
+
+
+    // var slidecontainer = controls.append('div')
+    //     .attr('class', 'slidecontainer');
+
+    // var mx = d3.max(df, function(d) { return d.value; });
+    // slidecontainer.append('input')
+    //     .on('change', function (c) { console.log(this.value); })
+    //     .attr('type', 'range')
+    //     .attr('min', '1')
+    //     .attr('max', '' + mx)
+    //     .attr('value', '' + mx / 2)
+    //     .attr('class', 'slider')
+    //     .attr('id', 'myRange');
 }
