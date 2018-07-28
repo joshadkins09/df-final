@@ -17,10 +17,6 @@ var xAxis = d3.svg.axis().scale(x)
 var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5);
 
-function normalized(d, b) {
-    return 100 * (d.baseline - d.value)/d.baseline; }
-
-// Define the line
 var priceline = d3.svg.line()
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(normalized(d)); });
@@ -55,27 +51,15 @@ d3.json("expand.json", function(error, data) {
         .text(function (d) { return d.key; });
 
     var region = "Latin America & Caribbean";
-    var filtered = dataNest.filter(function(e) { return e.key === region; });
     var df = data.filter(function(e) { return e.region === region; });
+    console.log(dataNest);
 
-    // Scale the range of the data
-    x.domain(d3.extent(df, function(d) { return d.year; }));
-    y.domain(d3.extent(df, function(d) { return normalized(d); }));
+    set_domain(x, y, df);
 
     var color = d3.scale.category10();   // set the colour scale
     write_lines(dataNest, color, 0);
 
-    // Add the X Axis
-    svg.append("g")
-        .attr("class", "x_axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-    // Add the Y Axis
-    svg.append("g")
-        .attr("class", "y_axis")
-        .call(yAxis);
-
+    add_axes();
 });
 
 function update_region(index) {
@@ -85,30 +69,17 @@ function update_region(index) {
         // Nest the entries by symbol
         var dataNest = get_nest(data);
         var region = dataNest[index].key;
-        dataNest.filter(function(e) { return e.key === region; });
-
         var df = data.filter(function(e) { return e.region == region; });
 
-        // Scale the range of the data
-        x.domain(d3.extent(df, function(d) { return d.year; }));
-        y.domain(d3.extent(df, function(d) { return normalized(d); }));
+        set_domain(x, y, df);
 
         var color = d3.scale.category10();   // set the colour scale
 
         svg.selectAll('.line').remove();
         write_lines(dataNest, color, index);
 
-        // Add the X Axis
         svg.select('.x_axis').remove();
-        svg.append("g")
-            .attr("class", "x_axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        // Add the Y Axis
         svg.select('.y_axis').remove();
-        svg.append("g")
-            .attr("class", "y_axis")
-            .call(yAxis);
+        add_axes();
     });
 }
