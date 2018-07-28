@@ -1,5 +1,5 @@
 var margin = {top: 30, right: 20, bottom: 70, left: 100},
-    width = 960 - margin.left - margin.right,
+    width = 1200 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 var parseDate = d3.time.format("%Y").parse;
@@ -58,6 +58,8 @@ d3.json("expand.json", function(error, data) {
     var controls = d3.select('body').append('div');
     controls.append('div')
         .append('select')
+        .style('margin-top', '50')
+        .style('margin-left', '75')
         .on('change', function(c) {
             var index = this.options.selectedIndex;
             update_region(index);
@@ -69,24 +71,24 @@ d3.json("expand.json", function(error, data) {
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    var slidecontainer = controls.append('div')
-        .attr('class', 'slidecontainer');
+    // var slidecontainer = controls.append('div')
+    //     .attr('class', 'slidecontainer');
 
-    var mx = d3.max(df, function(d) { return d.value; });
-    slidecontainer.append('input')
-        .on('change', function (c) { console.log(this.value); })
-        .attr('type', 'range')
-        .attr('min', '1')
-        .attr('max', '' + mx)
-        .attr('value', '' + mx / 2)
-        .attr('class', 'slider')
-        .attr('id', 'myRange');
-
-    set_domain(x, y, df);
+    // var mx = d3.max(df, function(d) { return d.value; });
+    // slidecontainer.append('input')
+    //     .on('change', function (c) { console.log(this.value); })
+    //     .attr('type', 'range')
+    //     .attr('min', '1')
+    //     .attr('max', '' + mx)
+    //     .attr('value', '' + mx / 2)
+    //     .attr('class', 'slider')
+    //     .attr('id', 'myRange');
 
     var color = d3.scale.category10();   // set the colour scale
-    write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, 0);
+    set_domain(x, y, df);
+    remove();
     add_axes();
+    write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, 0);
 });
 
 function update_region(index) {
@@ -96,15 +98,11 @@ function update_region(index) {
         var region = d3.nest().key(function(d) { return d.region; }).entries(data)[index].key;
         var df = data.filter(function(e) { return e.region === region; });
 
-        set_domain(x, y, df);
-
         var color = d3.scale.category10();
-
-        svg.selectAll('.line').remove();
+        set_domain(x, y, df);
+        remove();
+        add_axes();
         write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, index);
 
-        svg.select('.x_axis').remove();
-        svg.select('.y_axis').remove();
-        add_axes();
     });
 }
