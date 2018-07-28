@@ -12,7 +12,7 @@ function get_nest(data) {
 }
 
 function write_lines(nest, color, index) {
-    console.log(nest);
+    // console.log(nest);
     var d = nest[index];
         d.values.forEach(function(k, v) {
             svg.append("path")
