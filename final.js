@@ -1,16 +1,12 @@
-// Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 20, bottom: 70, left: 100},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-// Parse the year / time
 var parseDate = d3.time.format("%Y").parse;
 
-// Set the ranges
 var x = d3.time.scale().range([0, width]);
 var y = d3.scale.linear().range([height, 0]);
 
-// Define the axes
 var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(5);
 
@@ -21,7 +17,6 @@ var priceline = d3.svg.line()
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(normalized(d)); });
 
-// Adds the svg canvas
 var svg = d3.select("body")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -55,11 +50,9 @@ var svg = d3.select("body")
 //     return true;
 // }
 
-// Get the data
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
     var region = "Latin America & Caribbean";
-    // var df = data.filter(fobj_filter);
     var df = data.filter(function(e) { return e.region === region; });
 
     var controls = d3.select('body').append('div');
@@ -105,7 +98,7 @@ function update_region(index) {
 
         set_domain(x, y, df);
 
-        var color = d3.scale.category10();   // set the colour scale
+        var color = d3.scale.category10();
 
         svg.selectAll('.line').remove();
         write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, index);
