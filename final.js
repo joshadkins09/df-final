@@ -58,8 +58,6 @@ var svg = d3.select("body")
 // Get the data
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
-    var dataNest = get_nest(data);
-
     var region = "Latin America & Caribbean";
     // var df = data.filter(fobj_filter);
     var df = data.filter(function(e) { return e.region === region; });
@@ -72,7 +70,7 @@ d3.json("expand.json", function(error, data) {
             update_region(index);
         })
         .selectAll('option')
-        .data(dataNest)
+        .data(d3.nest().key(function(d) { return d.region; }).entries(data))
         .enter()
         .append('option')
         .attr('value',function (d) { return d.key; })
@@ -94,7 +92,7 @@ d3.json("expand.json", function(error, data) {
     set_domain(x, y, df);
 
     var color = d3.scale.category10();   // set the colour scale
-    write_lines(dataNest, color, 0);
+    write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, 0);
     add_axes();
 });
 
@@ -102,20 +100,15 @@ function update_region(index) {
     d3.json("expand.json", function(error, data) {
         data.forEach(function(d) { d.year = parseDate(d.year); });
 
-        var dataNest = get_nest(data);
-        var region = dataNest[index].key;
-
-        // var df = data.filter(fobj_filter);
+        var region = d3.nest().key(function(d) { return d.region; }).entries(data)[index].key;
         var df = data.filter(function(e) { return e.region === region; });
-
-        // var mx = d3.max(df, function(d) { return d.value; });
 
         set_domain(x, y, df);
 
         var color = d3.scale.category10();   // set the colour scale
 
         svg.selectAll('.line').remove();
-        write_lines(dataNest, color, index);
+        write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color, index);
 
         svg.select('.x_axis').remove();
         svg.select('.y_axis').remove();
