@@ -8,7 +8,7 @@ var x = d3.time.scale().range([0, width]);
 var y = d3.scale.linear().range([height, 0]);
 
 var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(5);
+    .orient("bottom").ticks(25);
 
 var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5);
@@ -62,11 +62,10 @@ d3.json("expand.json", function(error, data) {
 
     add_controls(data, region);
 
-    var color = d3.scale.category10();   // set the colour scale
     set_domain(x, y, df);
     remove();
     add_axes();
-    write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color);
+    write_lines(df);
 });
 
 function update_region(index) {
@@ -76,10 +75,9 @@ function update_region(index) {
         var region = d3.nest().key(function(d) { return d.region; }).entries(data)[index].key;
         var df = data.filter(function(e) { return e.region === region; });
 
-        var color = d3.scale.category10();
         set_domain(x, y, df);
         remove();
         add_axes();
-        write_lines(d3.nest().key(function(d) { return d.code; }).entries(df), color);
+        write_lines(df);
     });
 }

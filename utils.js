@@ -8,12 +8,15 @@ function flip(i) {
 
 function remove() {
     svg.selectAll('.line').remove();
+    svg.selectAll('.circle').remove();
     svg.selectAll('.legend').remove();
     svg.select('.x_axis').remove();
     svg.select('.y_axis').remove();
 }
 
-function write_lines(nest, color) {
+function write_lines(df) {
+    nest = d3.nest().key(function(d) { return d.code; }).entries(df);
+    var color = d3.scale.category10();
     lines = svg.selectAll('.line')
         .data(nest);
 
@@ -25,23 +28,43 @@ function write_lines(nest, color) {
         .style('stroke-width', '3')
         .attr("id", function (k) {
             return 'line_'+k.key; })
-        .attr("d", function(k) { return priceline(k.values); })
+        .attr("d", function(k) { return priceline(k.values); });
+// ................................................................................
+
+    circles = svg.selectAll('.circle')
+        .data(df);
+
+    circles.enter()
+        .append("circle")
+        .attr("class", "circle")
+        .style("stroke", function(k) {
+            return color(k.key); })
+        // .style('stroke-width', '3')
+        // .attr("id", function (k) {
+        //     return 'line_'+k.key; })
+        // .attr("d", function(k) { return priceline(k.values); })
+        .attr("r", "5")
+        .attr("cx", function (d) { return x(d.year); })
+        .attr("cy", function (d) { return y(normalized(d)); })
+        .style('opacity', 0)
         .on("mouseover", function(d) {
             console.log(d);
+            this.style.opacity = 1;
             div.transition()
                 .duration(200)
                 .style("opacity", .9);
-            div.html('<p>' + d.key + '</p>')
+            div.html('<p>' + d.value + '</p>')
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
         })
         .on("mouseout", function(d) {
+            this.style.opacity = 0;
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
         });
 
-
+// ................................................................................
     legends = svg.selectAll('.legend').data(nest);
     legends.enter().append("text")
         .text(function(k) { return k.key; })
