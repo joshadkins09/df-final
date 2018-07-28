@@ -3,7 +3,7 @@ var margin = {top: 30, right: 20, bottom: 70, left: 100},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-// Parse the date / time
+// Parse the year / time
 var parseDate = d3.time.format("%Y").parse;
 
 // Set the ranges
@@ -18,79 +18,92 @@ var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5);
 
 // Define the line
-var priceline = d3.svg.line()	
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.price); });
-    
+var priceline = d3.svg.line()
+    .x(function(d) { return x(d.year); })
+    .y(function(d) { return y(d.value); });
+
 // Adds the svg canvas
 var svg = d3.select("body")
     .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-// d3.csv("stocks.csv", function(error, data) {
-d3.json("data.json", function(error, d) {
-    data = expand_data(d, "North America");
-
-    console.log(data);
-    // Scale the range of the data
-    x.domain(d3.extent(data, function(d) { return d.date; }));
-    y.domain(d3.extent(data, function(d) { return d.price; }));
+d3.json("expand.json", function(error, data) {
+    data.forEach(function(d) { d.year = parseDate(d.year); });
 
     // Nest the entries by symbol
-    var dataNest = d3.nest()
-        .key(function(d) {return d.country_code;})
-        .entries(data);
+    var dataNest = get_nest(data);
+    // var dataNest = data.filter(function(d) { return d.region === "North America"; });
+
+    d3.select('body').append('div')
+        .append('select')
+        .on('change', function(c) {
+            var index = this.options.selectedIndex;
+            update_region(index);
+        })
+        .selectAll('option')
+        .data(dataNest)
+        .enter()
+        .append('option')
+        .attr('value',function (d) { return d.key; })
+        .text(function (d) { return d.key; });
+
+    var filtered = dataNest.filter(function(e) { return e.key === 'North America'; });
+    // console.log(filtered[0].values);
+
+    // Scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.year; }));
+    // y.domain(d3.extent(data, function(d) { return d.value; }));
+    // console.log(d3.extent(data, function(d) { return d.value; }));
+    y.domain([0, 1000000]);
 
     var color = d3.scale.category10();   // set the colour scale
-
-    legendSpace = width/dataNest.length; // spacing for the legend
-
-    // Loop through each symbol / key
-    dataNest.forEach(function(d,i) {
-
-        svg.append("path")
-            .attr("class", "line")
-            .style("stroke", function() { // Add the colours dynamically
-                return d.color = color(d.key); })
-            .attr("id", 'tag'+d.key.replace(/\s+/g, '')) // assign ID
-            .attr("d", priceline(d.values));
-
-        // Add the Legend
-        svg.append("text")
-            .attr("x", (legendSpace/2)+i*legendSpace)  // space legend
-            .attr("y", height + (margin.bottom/2)+ 5)
-            .attr("class", "legend")    // style the legend
-            .style("fill", function() { // Add the colours dynamically
-                return d.color = color(d.key); })
-            .on("click", function(){
-                // Determine if current line is visible 
-                var active   = d.active ? false : true,
-                newOpacity = active ? 0 : 1; 
-                // Hide or show the elements based on the ID
-                d3.select("#tag"+d.key.replace(/\s+/g, ''))
-                    .transition().duration(100) 
-                    .style("opacity", newOpacity); 
-                // Update whether or not the elements are active
-                d.active = active;
-                })  
-            .text(d.key); 
-
-    });
+    write_lines(dataNest, color, 0);
 
     // Add the X Axis
     svg.append("g")
-        .attr("class", "x axis")
+        .attr("class", "x_axis")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
     // Add the Y Axis
     svg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "y_axis")
         .call(yAxis);
 
 });
+
+function update_region(index) {
+    d3.json("expand.json", function(error, data) {
+        data.forEach(function(d) { d.year = parseDate(d.year); });
+
+        // Nest the entries by symbol
+        var dataNest = get_nest(data);
+        dataNest.filter(function(e) { return e.key === dataNest[index].key; });
+        console.log(dataNest);
+
+        // Scale the range of the data
+        // x.domain(d3.extent(data, function(d) { return d.year; }));
+        // y.domain(d3.extent(data, function(d) { return d.value; }));
+
+        var color = d3.scale.category10();   // set the colour scale
+
+        svg.selectAll('.line').remove();
+        write_lines(dataNest, color, index);
+
+        // // Add the X Axis
+        // svg.append("g")
+        //     .attr("class", "x_axis")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call(xAxis);
+
+        // // Add the Y Axis
+        // svg.append("g")
+        //     .attr("class", "y_axis")
+        //     .call(yAxis);
+    });
+}
