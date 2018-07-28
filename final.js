@@ -30,14 +30,42 @@ var svg = d3.select("body")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+// var fobj = {
+//     'region': {
+//         'enable': true,
+//         'value': 'Latin America & Caribbean',
+//         'func': function (d) {
+//             if (this.enable) return d.region === this.value;
+//             else return true;
+//         }
+//     },
+//     'range': {
+//         'enable': false,
+//         'max': '10000000',
+//         'func': function (d) {
+//             if (this.enable) return d.value < this.max;
+//             else return true;
+//         }
+//     }
+// };
+
+// function fobj_filter(d) {
+//     for (var key in fobj)
+//         if (!fobj[key]['func']()) return false;
+//     return true;
+// }
+
 // Get the data
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
-
-    // Nest the entries by symbol
     var dataNest = get_nest(data);
 
-    d3.select('body').append('div')
+    var region = "Latin America & Caribbean";
+    // var df = data.filter(fobj_filter);
+    var df = data.filter(function(e) { return e.region === region; });
+
+    var controls = d3.select('body').append('div');
+    controls.append('div')
         .append('select')
         .on('change', function(c) {
             var index = this.options.selectedIndex;
@@ -50,15 +78,23 @@ d3.json("expand.json", function(error, data) {
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    var region = "Latin America & Caribbean";
-    var df = data.filter(function(e) { return e.region === region; });
-    console.log(dataNest);
+    var slidecontainer = controls.append('div')
+        .attr('class', 'slidecontainer');
+
+    var mx = d3.max(df, function(d) { return d.value; });
+    slidecontainer.append('input')
+        .on('change', function (c) { console.log(this.value); })
+        .attr('type', 'range')
+        .attr('min', '1')
+        .attr('max', '' + mx)
+        .attr('value', '' + mx / 2)
+        .attr('class', 'slider')
+        .attr('id', 'myRange');
 
     set_domain(x, y, df);
 
     var color = d3.scale.category10();   // set the colour scale
     write_lines(dataNest, color, 0);
-
     add_axes();
 });
 
@@ -66,10 +102,13 @@ function update_region(index) {
     d3.json("expand.json", function(error, data) {
         data.forEach(function(d) { d.year = parseDate(d.year); });
 
-        // Nest the entries by symbol
         var dataNest = get_nest(data);
         var region = dataNest[index].key;
-        var df = data.filter(function(e) { return e.region == region; });
+
+        // var df = data.filter(fobj_filter);
+        var df = data.filter(function(e) { return e.region === region; });
+
+        // var mx = d3.max(df, function(d) { return d.value; });
 
         set_domain(x, y, df);
 

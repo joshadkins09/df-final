@@ -11,14 +11,13 @@ function get_nest(data) {
     return dataNest;
 }
 
-function write_lines(nest, color, index) {
-    // this is where we filter by 
-    var d = nest[index];
-    d.values.forEach(function(k, v) {
+function write_lines(nest, color, index, mx) {
+    var region = nest[index];
+    region.values.forEach(function(k, v) {
         svg.append("path")
             .attr("class", "line")
             .style("stroke", function() { // Add the colours dynamically
-                return d.color = color(k.key); })
+                return region.color = color(k.key); })
             .attr("id", 'tag'+k.key.replace(/\s+/g, '')) // assign ID
             .attr("d", priceline(k.values));
     });
