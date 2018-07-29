@@ -11,7 +11,9 @@ var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(25);
 
 var yAxis = d3.svg.axis().scale(y)
-    .orient("left").ticks(5);
+    .orient("left").ticks(5)
+    .tickFormat(d3.format('.1%'));
+;
 
 var priceline = d3.svg.line()
     .x(function(d) { return x(d.year); })
@@ -26,7 +28,7 @@ var svg = d3.select("body")
           "translate(" + margin.left + "," + margin.top + ")");
 
 // Define the div for the tooltip
-var div = d3.select("body").append("div")
+var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 

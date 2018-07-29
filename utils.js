@@ -1,5 +1,5 @@
 function normalized(d, b) {
-    return 100 * (d.value - d.baseline)/d.baseline;
+    return  (d.value - d.baseline)/d.baseline;
 }
 
 function flip(i) {
@@ -16,7 +16,8 @@ function remove() {
 
 function write_lines(df) {
     nest = d3.nest().key(function(d) { return d.code; }).entries(df);
-    var color = d3.scale.category10();
+    console.log(nest);
+    var color = d3.scale.category20();
     lines = svg.selectAll('.line')
         .data(nest);
 
@@ -39,27 +40,26 @@ function write_lines(df) {
         .attr("class", "circle")
         .style("stroke", function(k) {
             return color(k.key); })
-        // .style('stroke-width', '3')
-        // .attr("id", function (k) {
-        //     return 'line_'+k.key; })
-        // .attr("d", function(k) { return priceline(k.values); })
         .attr("r", "5")
         .attr("cx", function (d) { return x(d.year); })
         .attr("cy", function (d) { return y(normalized(d)); })
         .style('opacity', 0)
         .on("mouseover", function(d) {
-            console.log(d);
             this.style.opacity = 1;
-            div.transition()
+            tooltip.transition()
                 .duration(200)
                 .style("opacity", .9);
-            div.html('<p>' + d.value + '</p>')
+            tooltip.html('<p>' + d.name + '</p>' +
+                     '<p>' + d.year.getFullYear() + '</p>' +
+                     '<p>' + d.value + ' sq. km. </p>' +
+                     '<p>' + (100 * normalized(d)).toFixed(2) + '% </p>')
                 .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+                .style("top", (d3.event.pageY - 28) + "px")
+            ;
         })
         .on("mouseout", function(d) {
             this.style.opacity = 0;
-            div.transition()
+            tooltip.transition()
                 .duration(500)
                 .style("opacity", 0);
         });
@@ -107,7 +107,7 @@ function add_controls(data, region) {
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
-        .style('margin-top', '50')
+        .style('margin-top', '25')
         .style('margin-left', '75')
         .on('change', function(c) {
             var index = this.options.selectedIndex;
