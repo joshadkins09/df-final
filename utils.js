@@ -17,7 +17,7 @@ function remove() {
 function write_lines(df) {
     nest = d3.nest().key(function(d) { return d.code; }).entries(df);
     var color = d3.scale.category10();
-    lines = svg.selectAll('.line')
+    lines = svg.append('g').attr('id', 'line-container').selectAll('.line')
         .data(nest);
 
     lines.enter()
@@ -30,7 +30,7 @@ function write_lines(df) {
         .attr("d", function(k) { return valueline(k.values); });
     // ................................................................................
 
-    circles = svg.selectAll('.circle')
+    circles = svg.append('g').attr('id', 'circle-container').selectAll('.circle')
         .data(df);
 
     circles.enter()
@@ -70,7 +70,9 @@ function write_lines(df) {
         });
 
     // ................................................................................
-    legends = svg.selectAll('.legend').data(nest);
+    legends = svg.append('g')
+        .attr('id', 'legend-container')
+        .selectAll('.legend').data(nest);
     legends.enter().append("text")
         .text(function(k) { return k.key; })
         .attr("x", function(d, i) {
@@ -79,11 +81,10 @@ function write_lines(df) {
         })
         .attr("y", function(d, i) {
             mult = Math.floor(i * 51 / width) + 1;
-            return height + margin.top + mult*20; })
+            return height + margin.top + (mult + 1)*20; })
         .attr("class", "legend")
         .attr("id", function(k) { return "legend_item_"+k.key; })
         .style("fill", function(k) { return color(k.key); })
-        .style('z-index', '1')
         .on("click", function(k){
             var line = svg.select('#line_'+k.key);
             var op = flip(line.style('opacity'));
@@ -109,12 +110,11 @@ function add_axes() {
 }
 
 function add_controls(data) {
-    var controls = d3.select('body').append('div');
+    var controls = d3.select('body').append('div').style('margin-top', '25');
 
     controls.append('div')
         .append('button')
         .attr('id', 'toggler')
-        .style('margin-top', '25')
         .style('margin-left', '75')
         .style('float', 'left')
         .on('click', function(d) {
@@ -139,7 +139,6 @@ function add_controls(data) {
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
-        .style('margin-top', '25')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
@@ -159,7 +158,6 @@ function add_controls(data) {
     controls.append('div')
         .append('select')
         .attr('id', 'income_select')
-        .style('margin-top', '25')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
@@ -178,7 +176,6 @@ function add_controls(data) {
     controls.append('div')
         .append('select')
         .attr('id', 'min_select')
-        .style('margin-top', '25')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
@@ -196,7 +193,6 @@ function add_controls(data) {
     controls.append('div')
         .append('select')
         .attr('id', 'max_select')
-        .style('margin-top', '25')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
