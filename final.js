@@ -27,6 +27,21 @@ var svg = d3.select("body")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+svg.append("text")
+    .attr("class", "x label")
+    .attr("id", "x_label")
+    .attr("x", width /2)
+    .attr("y", height + 50)
+    .text("Year");
+
+svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("x", -100)
+    .attr("y", -60)
+    .attr("transform", "rotate(-90)")
+    .text("% change in forest area since 1990");
+
 // Define the div for the tooltip
 var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
@@ -48,7 +63,7 @@ d3.json("expand.json", function(error, data) {
     write_lines(df);
 });
 
-function update() {
+function update(update_restore) {
     d3.json("expand.json", function(error, data) {
         data.forEach(function(d) { d.year = parseDate(d.year); });
 
@@ -60,6 +75,7 @@ function update() {
             .filter(function(e) { return e.baseline <= filts.max; })
         ;
 
+        d3.select('#toggler').text('remove all');
         set_domain(x, y, df);
         remove();
         add_axes();

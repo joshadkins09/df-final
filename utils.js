@@ -7,7 +7,7 @@ function flip(i) {
 }
 
 function remove() {
-    svg.selectAll('.line').remove();
+    svg.selectAll('.data_line').remove();
     svg.selectAll('.circle').remove();
     svg.selectAll('.legend').remove();
     svg.select('.x_axis').remove();
@@ -22,10 +22,10 @@ function write_lines(df) {
 
     lines.enter()
         .append("path")
-        .attr("class", "line")
+        .attr("class", "data_line")
         .style("stroke", function(k) {
             return color(k.key); })
-        .style('stroke-width', '3')
+        .style('stroke-width', '4')
         .attr("id", function (k) {return 'line_'+k.key; })
         .attr("d", function(k) { return priceline(k.values); });
     // ................................................................................
@@ -39,7 +39,7 @@ function write_lines(df) {
         .attr('id', function(k) { return 'circle_'+k.code; })
         .style("stroke", function(k) {
             return color(k.key); })
-        .attr("r", "5")
+        .attr("r", "6")
         .attr("cx", function (d) { return x(d.year); })
         .attr("cy", function (d) { return y(normalized(d)); })
         .style('opacity', 0)
@@ -79,7 +79,7 @@ function write_lines(df) {
         })
         .attr("y", function(d, i) {
             mult = Math.floor(i * 51 / width) + 1;
-            return height + margin.top + mult*20; })
+            return height + margin.top + 20 + mult*20; })
         .attr("class", "legend")
         .attr("id", function(k) { return "legend_item_"+k.key; })
         .style("fill", function(k) { return color(k.key); })
@@ -109,12 +109,36 @@ function add_axes() {
 
 function add_controls(data) {
     var controls = d3.select('body').append('div');
+
+    controls.append('div')
+        .append('button')
+        .attr('id', 'toggler')
+        .style('margin-top', '25')
+        .style('margin-left', '75')
+        .style('float', 'left')
+        .on('click', function(d) {
+            button = d3.select('#toggler');
+            if (button.text() == "remove all")
+            {
+                svg.selectAll('.data_line').style('opacity', 0);
+                svg.selectAll('.legend').style('opacity', 0.5);
+                button.text('restore all');
+            }
+            else
+            {
+                svg.selectAll('.data_line').style('opacity', 1);
+                svg.selectAll('.legend').style('opacity', 1);
+                button.text('remove all');
+            }
+        })
+        .text('remove all');
+
     // controls.style('float', 'left');
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
         .style('margin-top', '25')
-        .style('margin-left', '75')
+        .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
             update();
