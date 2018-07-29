@@ -54,7 +54,7 @@ function write_lines(df) {
                              '<p>' + d.year.getFullYear() + '</p>' +
                              '<p>' + d.value + ' sq. km. </p>' +
                              '<p>' + (100 * normalized(d)).toFixed(2) + '% </p>')
-                    .style("left", (d3.event.pageX) + "px")
+                    .style("left", (d3.event.pageX - 50) + "px")
                     .style("top", (d3.event.pageY - 28) + "px")
                 ;
             }

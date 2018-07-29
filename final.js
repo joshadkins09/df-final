@@ -42,10 +42,65 @@ svg.append("text")
     .attr("transform", "rotate(-90)")
     .text("% change in forest area since 1990");
 
-// Define the div for the tooltip
 var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
+
+var rightside = d3.select("body")
+    .append("div");
+
+var blurb = rightside.append('div')
+    .attr("class", "tooltip")
+    .style("left", '1250')
+    .style("top", '150px')
+    .style('width', '500px')
+    .style('height', '150px')
+    .append('blockquote')
+    .attr("id", 'blurb')
+    .style('margin-left', '10px')
+    .style('margin-right', '10px')
+    .text('"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."')
+    .style("opacity", 1);
+
+rightside.append('div')
+    .append('button')
+    .attr('id', 'fast-back-button')
+    .style("position", 'absolute')
+    .style("left", '1350px')
+    .style('top', '350px')
+    .text('<<');
+
+rightside.append('div')
+    .append('button')
+    .attr('id', 'back-button')
+    .style("position", 'absolute')
+    .style("left", '1450px')
+    .style('top', '350px')
+    .text('<');
+
+rightside.append('div')
+    .append('label')
+    .attr('id', 'forward-button')
+    .style("position", 'absolute')
+    .style("left", '1550px')
+    .style('top', '360px')
+    .text('1');
+
+rightside.append('div')
+    .append('button')
+    .attr('id', 'baz')
+    .style("position", 'absolute')
+    .style("left", '1600px')
+    .style('top', '350px')
+    .text('>');
+
+// controls.append('div')
+//     .append('button')
+//     .attr('id', 'bar')
+//     .style('margin-top', '25')
+//     .style('margin-left', '25')
+//     .style('float', 'left')
+//     .text('>');
 
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
