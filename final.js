@@ -46,21 +46,56 @@ var slideindex = 0;
 var slideparams = [
     {
         'region': 'Latin America & Caribbean',
-        'income': 'Lower middle income',
+        'income': 'All',
         'min': '0',
         'max': '10000000',
         'msg': 'this is the first slide'
     },
     {
-        'region': 'Latin America & Caribbean',
-        'income': 'Upper middle income',
+        'region': 'South Asia',
+        'income': 'All',
         'min': '0',
         'max': '10000000',
-        'msg': 'a second slide there is also'
+        'msg': 'this is the first slide'
     },
     {
+        'region': 'Sub-Saharan Africa',
+        'income': 'All',
+        'min': '0',
+        'max': '10000000',
+        'msg': 'this is the first slide'
+    },
+    {
+        'region': 'Europe & Central Asia',
+        'income': 'All',
+        'min': '0',
+        'max': '10000000',
+        'msg': 'this is the first slide'
+    },
+    {
+        'region': 'Middle East & North Africa',
+        'income': 'All',
+        'min': '0',
+        'max': '10000000',
+        'msg': 'this is the first slide'
+    },
+    {
+        'region': 'East Asia & Pacific',
+        'income': 'All',
+        'min': '0',
+        'max': '10000000',
+        'msg': 'this is the first slide'
+    },
+    // {
+    //     'region': 'Latin America & Caribbean',
+    //     'income': 'Upper middle income',
+    //     'min': '0',
+    //     'max': '10000000',
+    //     'msg': 'a second slide there is also'
+    // },
+    {
         'region': 'North America',
-        'income': 'High income',
+        'income': 'All',
         'min': '1000',
         'max': '10000000',
         'msg': 'yay three'
@@ -172,8 +207,8 @@ d3.json("expand.json", function(error, data) {
     var region = slideparams[0].region;
     var income = slideparams[0].income;
     var df = data
-        .filter(function(e) { return e.region === region; })
-        .filter(function(e) { return e.income === income; })
+        .filter(function(e) { return region == 'All' || e.region === region; })
+        .filter(function(e) { return income == 'All' || e.income === income; })
     ;
 
     add_controls(data);
