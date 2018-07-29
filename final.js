@@ -70,10 +70,10 @@ var slidemax = slideparams.length;
 function set_from_slideindex(index) {
     if (index == 0) d3.select('#about').style('opacity', '1');
     else d3.select('#about').style('opacity', '0');
-    d3.select('#region_select').property('value', slideparams[index].region);
-    d3.select('#income_select').property('value', slideparams[index].income);
-    d3.select('#min_select').property('value', slideparams[index].min);
-    d3.select('#max_select').property('value', slideparams[index].max);
+    d3.select('#region-select').property('value', slideparams[index].region);
+    d3.select('#income-select').property('value', slideparams[index].income);
+    d3.select('#min-select').property('value', slideparams[index].min);
+    d3.select('#max-select').property('value', slideparams[index].max);
     d3.select('#blurb').text(slideparams[index].msg);
     update();
 }

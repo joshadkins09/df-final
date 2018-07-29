@@ -138,61 +138,78 @@ function add_controls(data) {
     regions.push({'key': 'All'});
     controls.append('div')
         .append('select')
-        .attr('id', 'region_select')
+        .attr('id', 'region-select')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
+            if (d3.select('#region-select').property('value') == "All")
+            {
+                d3.select('#income-option-All').property('disabled', true);
+            }
+            else
+            {
+                d3.select('#income-option-All').property('disabled', false);
+            }
             update();
         })
         .selectAll('option')
         .data(regions)
         .enter()
         .append('option')
+        .attr('id', function(d) { return 'region-option-' + d.key; })
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    controls.select('#region_select').property('value', slideparams[0].region);
+    controls.select('#region-select').property('value', slideparams[0].region);
 
     incomes =d3.nest().key(function(d) { return d.income; }).entries(data);
     incomes.push({'key': 'All'});
     controls.append('div')
         .append('select')
-        .attr('id', 'income_select')
+        .attr('id', 'income-select')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
-            var index = this.options.selectedIndex;
+            if (d3.select('#income-select').property('value') == "All")
+            {
+                d3.select('#region-option-All').property('disabled', true);
+            }
+            else
+            {
+                d3.select('#region-option-All').property('disabled', false);
+            }
             update();
         })
         .selectAll('option')
         .data(incomes)
         .enter()
         .append('option')
+        .attr('id', function(d) { return 'income-option-' + d.key; })
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    controls.select('#income_select').property('value', slideparams[0].income);
+    controls.select('#income-select').property('value', slideparams[0].income);
 
     controls.append('div')
         .append('select')
-        .attr('id', 'min_select')
+        .attr('id', 'min-select')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
             update();
         })
         .selectAll('option')
-        .data([0, 1000, 10000, 100000])
+        .data([0, 1000, 10000, 100000, 1000000])
         .enter()
         .append('option')
         .attr('value', function (d) { return d; })
         .text(function (d) { return 'min area of ' + d + ' sq. km.'; });
 
-    controls.select('#min_select').property('value', slideparams[0].min);
+    controls.select('#min-select').property('value', slideparams[0].min);
 
     controls.append('div')
         .append('select')
-        .attr('id', 'max_select')
+        .attr('id', 'max-select')
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
@@ -205,14 +222,14 @@ function add_controls(data) {
         .attr('value', function (d) { return d; })
         .text(function (d) { return 'max area of ' + d + ' sq. km.'; });
 
-    controls.select('#max_select').property('value', slideparams[0].max);
+    controls.select('#max-select').property('value', slideparams[0].max);
 }
 
 function get_filts() {
     return {
-        'region': d3.select('#region_select').node().value,
-        'income': d3.select('#income_select').node().value,
-        'min': d3.select('#min_select').node().value,
-        'max': d3.select('#max_select').node().value
+        'region': d3.select('#region-select').node().value,
+        'income': d3.select('#income-select').node().value,
+        'min': d3.select('#min-select').node().value,
+        'max': d3.select('#max-select').node().value
     };
 }
