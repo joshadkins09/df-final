@@ -32,50 +32,33 @@ var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-// var fobj = {
-//     'region': {
-//         'enable': true,
-//         'value': 'Latin America & Caribbean',
-//         'func': function (d) {
-//             if (this.enable) return d.region === this.value;
-//             else return true;
-//         }
-//     },
-//     'range': {
-//         'enable': false,
-//         'max': '10000000',
-//         'func': function (d) {
-//             if (this.enable) return d.value < this.max;
-//             else return true;
-//         }
-//     }
-// };
-
-// function fobj_filter(d) {
-//     for (var key in fobj)
-//         if (!fobj[key]['func']()) return false;
-//     return true;
-// }
-
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
     var region = "North America";
-    var df = data.filter(function(e) { return e.region === region; });
+    var income = "High income";
+    var df = data
+        .filter(function(e) { return e.region === region; })
+        .filter(function(e) { return e.income === income; })
+    ;
 
-    add_controls(data, region);
-
+    add_controls(data);
     set_domain(x, y, df);
     remove();
     add_axes();
     write_lines(df);
 });
 
-function update_region(index) {
+function update() {
     d3.json("expand.json", function(error, data) {
         data.forEach(function(d) { d.year = parseDate(d.year); });
 
-        var region = d3.nest().key(function(d) { return d.region; }).entries(data)[index].key;
-        var df = data.filter(function(e) { return e.region === region; });
+        filts = get_filts();
+        var df = data
+            .filter(function(e) { return e.region === filts.region; })
+            .filter(function(e) { return e.income === filts.income; })
+            .filter(function(e) { return e.baseline >= filts.min; })
+            .filter(function(e) { return e.baseline <= filts.max; })
+        ;
 
         set_domain(x, y, df);
         remove();

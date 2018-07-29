@@ -16,7 +16,6 @@ function remove() {
 
 function write_lines(df) {
     nest = d3.nest().key(function(d) { return d.code; }).entries(df);
-    console.log(nest);
     var color = d3.scale.category20();
     lines = svg.selectAll('.line')
         .data(nest);
@@ -27,10 +26,9 @@ function write_lines(df) {
         .style("stroke", function(k) {
             return color(k.key); })
         .style('stroke-width', '3')
-        .attr("id", function (k) {
-            return 'line_'+k.key; })
+        .attr("id", function (k) {return 'line_'+k.key; })
         .attr("d", function(k) { return priceline(k.values); });
-// ................................................................................
+    // ................................................................................
 
     circles = svg.selectAll('.circle')
         .data(df);
@@ -38,6 +36,7 @@ function write_lines(df) {
     circles.enter()
         .append("circle")
         .attr("class", "circle")
+        .attr('id', function(k) { return 'circle_'+k.code; })
         .style("stroke", function(k) {
             return color(k.key); })
         .attr("r", "5")
@@ -45,26 +44,32 @@ function write_lines(df) {
         .attr("cy", function (d) { return y(normalized(d)); })
         .style('opacity', 0)
         .on("mouseover", function(d) {
-            this.style.opacity = 1;
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
-            tooltip.html('<p>' + d.name + '</p>' +
-                     '<p>' + d.year.getFullYear() + '</p>' +
-                     '<p>' + d.value + ' sq. km. </p>' +
-                     '<p>' + (100 * normalized(d)).toFixed(2) + '% </p>')
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px")
-            ;
+            if (d3.select('#legend_item_'+d.code).style('opacity') == 1)
+            {
+                this.style.opacity = 1;
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltip.html('<p>' + d.name + '</p>' +
+                             '<p>' + d.year.getFullYear() + '</p>' +
+                             '<p>' + d.value + ' sq. km. </p>' +
+                             '<p>' + (100 * normalized(d)).toFixed(2) + '% </p>')
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px")
+                ;
+            }
         })
         .on("mouseout", function(d) {
-            this.style.opacity = 0;
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
+            if (d3.select('#legend_item_'+d.code).style('opacity') == 1)
+            {
+                this.style.opacity = 0;
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            }
         });
 
-// ................................................................................
+    // ................................................................................
     legends = svg.selectAll('.legend').data(nest);
     legends.enter().append("text")
         .text(function(k) { return k.key; })
@@ -102,16 +107,17 @@ function add_axes() {
         .call(yAxis);
 }
 
-function add_controls(data, region) {
+function add_controls(data) {
     var controls = d3.select('body').append('div');
+    // controls.style('float', 'left');
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
         .style('margin-top', '25')
         .style('margin-left', '75')
+        .style('float', 'left')
         .on('change', function(c) {
-            var index = this.options.selectedIndex;
-            update_region(index);
+            update();
         })
         .selectAll('option')
         .data(d3.nest().key(function(d) { return d.region; }).entries(data))
@@ -120,19 +126,69 @@ function add_controls(data, region) {
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    controls.select('#region_select').property('value', region);
+    controls.select('#region_select').property('value', "North America");
 
+    controls.append('div')
+        .append('select')
+        .attr('id', 'income_select')
+        .style('margin-top', '25')
+        .style('margin-left', '25')
+        .style('float', 'left')
+        .on('change', function(c) {
+            var index = this.options.selectedIndex;
+            update();
+        })
+        .selectAll('option')
+        .data(d3.nest().key(function(d) { return d.income; }).entries(data))
+        .enter()
+        .append('option')
+        .attr('value',function (d) { return d.key; })
+        .text(function (d) { return d.key; });
 
-    // var slidecontainer = controls.append('div')
-    //     .attr('class', 'slidecontainer');
+    controls.select('#income_select').property('value', "High income");
 
-    // var mx = d3.max(df, function(d) { return d.value; });
-    // slidecontainer.append('input')
-    //     .on('change', function (c) { console.log(this.value); })
-    //     .attr('type', 'range')
-    //     .attr('min', '1')
-    //     .attr('max', '' + mx)
-    //     .attr('value', '' + mx / 2)
-    //     .attr('class', 'slider')
-    //     .attr('id', 'myRange');
+    controls.append('div')
+        .append('select')
+        .attr('id', 'min_select')
+        .style('margin-top', '25')
+        .style('margin-left', '25')
+        .style('float', 'left')
+        .on('change', function(c) {
+            update();
+        })
+        .selectAll('option')
+        .data([0, 1000, 10000, 100000])
+        .enter()
+        .append('option')
+        .attr('value', function (d) { return d; })
+        .text(function (d) { return d; });
+
+    controls.select('#min_select').property('value', "0");
+
+    controls.append('div')
+        .append('select')
+        .attr('id', 'max_select')
+        .style('margin-top', '25')
+        .style('margin-left', '25')
+        .style('float', 'left')
+        .on('change', function(c) {
+            update();
+        })
+        .selectAll('option')
+        .data([1000, 10000, 100000, 1000000, 10000000])
+        .enter()
+        .append('option')
+        .attr('value', function (d) { return d; })
+        .text(function (d) { return d; });
+
+    controls.select('#max_select').property('value', "10000000");
+}
+
+function get_filts() {
+    return {
+        'region': d3.select('#region_select').node().value,
+        'income': d3.select('#income_select').node().value,
+        'min': d3.select('#min_select').node().value,
+        'max': d3.select('#max_select').node().value
+    };
 }
