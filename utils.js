@@ -149,7 +149,7 @@ function add_controls(data) {
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    controls.select('#region_select').property('value', "North America");
+    controls.select('#region_select').property('value', slideparams[0].region);
 
     controls.append('div')
         .append('select')
@@ -168,7 +168,7 @@ function add_controls(data) {
         .attr('value',function (d) { return d.key; })
         .text(function (d) { return d.key; });
 
-    controls.select('#income_select').property('value', "High income");
+    controls.select('#income_select').property('value', slideparams[0].income);
 
     controls.append('div')
         .append('select')
@@ -186,7 +186,7 @@ function add_controls(data) {
         .attr('value', function (d) { return d; })
         .text(function (d) { return 'min area of ' + d + ' sq. km.'; });
 
-    controls.select('#min_select').property('value', "0");
+    controls.select('#min_select').property('value', slideparams[0].min);
 
     controls.append('div')
         .append('select')
@@ -204,7 +204,7 @@ function add_controls(data) {
         .attr('value', function (d) { return d; })
         .text(function (d) { return 'max area of ' + d + ' sq. km.'; });
 
-    controls.select('#max_select').property('value', "10000000");
+    controls.select('#max_select').property('value', slideparams[0].max);
 }
 
 function get_filts() {

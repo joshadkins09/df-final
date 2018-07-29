@@ -42,6 +42,33 @@ svg.append("text")
     .attr("transform", "rotate(-90)")
     .text("% change in forest area since 1990");
 
+var slideindex = 0;
+var slideparams = [
+    {
+        'region': 'Latin America & Caribbean',
+        'income': 'Lower middle income',
+        'min': '0',
+        'max': '10000000',
+        'msg': 'this is the first slide'
+    },
+    {
+        'region': 'Latin America & Caribbean',
+        'income': 'Upper middle income',
+        'min': '0',
+        'max': '10000000',
+        'msg': 'a second slide there is also'
+    }
+];
+var slidemax = slideparams.length;
+function set_from_slideindex(index) {
+    d3.select('#region_select').property('value', slideparams[index].region);
+    d3.select('#income_select').property('value', slideparams[index].income);
+    d3.select('#min_select').property('value', slideparams[index].min);
+    d3.select('#max_select').property('value', slideparams[index].max);
+    d3.select('#blurb').text(slideparams[index].msg);
+    update();
+}
+
 var tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
@@ -59,7 +86,7 @@ var blurb = rightside.append('div')
     .attr("id", 'blurb')
     .style('margin-left', '10px')
     .style('margin-right', '10px')
-    .text('"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."')
+    .text(slideparams[0].msg)
     .style("opacity", 1);
 
 rightside.append('div')
@@ -68,7 +95,13 @@ rightside.append('div')
     .style("position", 'absolute')
     .style("left", '1350px')
     .style('top', '350px')
-    .text('<<');
+    .text('<<')
+    .on('click', function(d) {
+        slideindex = 0;
+        rightside.select('#slide-label').text(slideindex + 1);
+        set_from_slideindex(slideindex);
+    })
+;
 
 rightside.append('div')
     .append('button')
@@ -76,15 +109,25 @@ rightside.append('div')
     .style("position", 'absolute')
     .style("left", '1450px')
     .style('top', '350px')
-    .text('<');
+    .text('<')
+    .on('click', function(d) {
+        if (slideindex > 0)
+        {
+            --slideindex;
+            rightside.select('#slide-label').text(slideindex + 1);
+            set_from_slideindex(slideindex);
+        }
+    })
+;
 
 rightside.append('div')
     .append('label')
-    .attr('id', 'forward-button')
+    .attr('id', 'slide-label')
     .style("position", 'absolute')
     .style("left", '1550px')
     .style('top', '360px')
-    .text('1');
+    .text('' + (slideindex + 1))
+;
 
 rightside.append('div')
     .append('button')
@@ -92,20 +135,29 @@ rightside.append('div')
     .style("position", 'absolute')
     .style("left", '1600px')
     .style('top', '350px')
-    .text('>');
+    .text('>')
+    .on('click', function(d) {
+        if (slideindex < (slidemax - 1))
+        {
+            ++slideindex;
+            rightside.select('#slide-label').text(slideindex + 1);
+            set_from_slideindex(slideindex);
+        }
+    })
+;
 
-// controls.append('div')
-//     .append('button')
-//     .attr('id', 'bar')
-//     .style('margin-top', '25')
-//     .style('margin-left', '25')
-//     .style('float', 'left')
-//     .text('>');
+rightside.append('div')
+    .append('button')
+    .attr('id', 'back-button')
+    .style("position", 'absolute')
+    .style("left", '1400px')
+    .style('top', '400px')
+    .text('About the Visualization');
 
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parseDate(d.year); });
-    var region = "North America";
-    var income = "High income";
+    var region = slideparams[0].region;
+    var income = slideparams[0].income;
     var df = data
         .filter(function(e) { return e.region === region; })
         .filter(function(e) { return e.income === income; })
