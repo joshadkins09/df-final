@@ -184,7 +184,7 @@ function add_controls(data) {
         .enter()
         .append('option')
         .attr('value', function (d) { return d; })
-        .text(function (d) { return d; });
+        .text(function (d) { return 'min area of ' + d + ' sq. km.'; });
 
     controls.select('#min_select').property('value', "0");
 
@@ -202,7 +202,7 @@ function add_controls(data) {
         .enter()
         .append('option')
         .attr('value', function (d) { return d; })
-        .text(function (d) { return d; });
+        .text(function (d) { return 'max area of ' + d + ' sq. km.'; });
 
     controls.select('#max_select').property('value', "10000000");
 }
