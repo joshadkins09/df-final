@@ -16,7 +16,7 @@ function remove() {
 
 function write_lines(df) {
     nest = d3.nest().key(function(d) { return d.code; }).entries(df);
-    var color = d3.scale.category20();
+    var color = d3.scale.category10();
     lines = svg.selectAll('.line')
         .data(nest);
 
@@ -27,7 +27,7 @@ function write_lines(df) {
             return color(k.key); })
         .style('stroke-width', '4')
         .attr("id", function (k) {return 'line_'+k.key; })
-        .attr("d", function(k) { return priceline(k.values); });
+        .attr("d", function(k) { return valueline(k.values); });
     // ................................................................................
 
     circles = svg.selectAll('.circle')
@@ -133,7 +133,6 @@ function add_controls(data) {
         })
         .text('remove all');
 
-    // controls.style('float', 'left');
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
