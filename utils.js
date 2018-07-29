@@ -16,18 +16,19 @@ function remove() {
 
 function write_lines(df) {
     nest = d3.nest().key(function(d) { return d.code; }).entries(df);
-    var color = d3.scale.category20();
+    var color = d3.scale.category10();
     lines = svg.selectAll('.line')
         .data(nest);
 
     lines.enter()
         .append("path")
         .attr("class", "line")
+        .attr("class", "data_line")
         .style("stroke", function(k) {
             return color(k.key); })
         .style('stroke-width', '3')
         .attr("id", function (k) {return 'line_'+k.key; })
-        .attr("d", function(k) { return priceline(k.values); });
+        .attr("d", function(k) { return valueline(k.values); });
     // ................................................................................
 
     circles = svg.selectAll('.circle')
@@ -109,12 +110,35 @@ function add_axes() {
 
 function add_controls(data) {
     var controls = d3.select('body').append('div');
-    // controls.style('float', 'left');
+
+    controls.append('div')
+        .append('button')
+        .attr('id', 'toggler')
+        .style('margin-top', '25')
+        .style('margin-left', '75')
+        .style('float', 'left')
+        .on('click', function(d) {
+            button = d3.select('#toggler');
+            if (button.text() == "remove all")
+            {
+                svg.selectAll('.data_line').style('opacity', 0);
+                svg.selectAll('.legend').style('opacity', 0.5);
+                button.text('restore all');
+            }
+            else
+            {
+                svg.selectAll('.data_line').style('opacity', 1);
+                svg.selectAll('.legend').style('opacity', 1);
+                button.text('remove all');
+            }
+        })
+        .text('remove all');
+
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
         .style('margin-top', '25')
-        .style('margin-left', '75')
+        .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
             update();

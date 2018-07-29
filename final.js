@@ -15,7 +15,7 @@ var yAxis = d3.svg.axis().scale(y)
     .tickFormat(d3.format('.1%'));
 ;
 
-var priceline = d3.svg.line()
+var valueline = d3.svg.line()
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(normalized(d)); });
 
