@@ -161,7 +161,11 @@ rightside.append('div')
     .style("position", 'absolute')
     .style("left", '1400px')
     .style('top', '400px')
-    .text('About the Visualization');
+    .text('About the Visualization')
+    .on('click', function() {
+        alert(essay);
+    })
+;
 
 d3.json("expand.json", function(error, data) {
     data.forEach(function(d) { d.year = parse_date(d.year); });
