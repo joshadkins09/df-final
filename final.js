@@ -2,15 +2,15 @@ var margin = {top: 30, right: 20, bottom: 120, left: 100},
     width = 1200 - margin.left - margin.right,
     height = 700 - margin.top - margin.bottom;
 
-var parseDate = d3.time.format("%Y").parse;
+var parse_date = d3.time.format("%Y").parse;
 
 var x = d3.time.scale().range([0, width]);
 var y = d3.scale.linear().range([height, 0]);
 
-var xAxis = d3.svg.axis().scale(x)
+var xaxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(25);
 
-var yAxis = d3.svg.axis().scale(y)
+var yaxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5)
     .tickFormat(d3.format('.1%'));
 ;
@@ -164,7 +164,7 @@ rightside.append('div')
     .text('About the Visualization');
 
 d3.json("expand.json", function(error, data) {
-    data.forEach(function(d) { d.year = parseDate(d.year); });
+    data.forEach(function(d) { d.year = parse_date(d.year); });
     var region = slideparams[0].region;
     var income = slideparams[0].income;
     var df = data
@@ -181,7 +181,7 @@ d3.json("expand.json", function(error, data) {
 
 function update(update_restore) {
     d3.json("expand.json", function(error, data) {
-        data.forEach(function(d) { d.year = parseDate(d.year); });
+        data.forEach(function(d) { d.year = parse_date(d.year); });
 
         filts = get_filts();
         var df = data

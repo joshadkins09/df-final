@@ -102,11 +102,11 @@ function add_axes() {
     svg.append("g")
         .attr("class", "x_axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+        .call(xaxis);
 
     svg.append("g")
         .attr("class", "y_axis")
-        .call(yAxis);
+        .call(yaxis);
 }
 
 function add_controls(data) {
