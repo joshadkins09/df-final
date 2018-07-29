@@ -80,7 +80,7 @@ function write_lines(df) {
             return i*49.1 - width*mult;
         })
         .attr("y", function(d, i) {
-            mult = Math.floor(i * 51 / width) + 1;
+            mult = Math.floor(i * 50 / width) + 1;
             return height + margin.top + (mult + 1)*20; })
         .attr("class", "legend")
         .attr("id", function(k) { return "legend_item_"+k.key; })
