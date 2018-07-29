@@ -185,8 +185,8 @@ function update(update_restore) {
 
         filts = get_filts();
         var df = data
-            .filter(function(e) { return e.region === filts.region; })
-            .filter(function(e) { return e.income === filts.income; })
+            .filter(function(e) { return filts.region == 'All' || e.region === filts.region; })
+            .filter(function(e) { return filts.income == 'All' || e.income === filts.income; })
             .filter(function(e) { return e.baseline >= filts.min; })
             .filter(function(e) { return e.baseline <= filts.max; })
         ;

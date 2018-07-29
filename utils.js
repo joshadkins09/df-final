@@ -79,10 +79,11 @@ function write_lines(df) {
         })
         .attr("y", function(d, i) {
             mult = Math.floor(i * 51 / width) + 1;
-            return height + margin.top + 20 + mult*20; })
+            return height + margin.top + mult*20; })
         .attr("class", "legend")
         .attr("id", function(k) { return "legend_item_"+k.key; })
         .style("fill", function(k) { return color(k.key); })
+        .style('z-index', '1')
         .on("click", function(k){
             var line = svg.select('#line_'+k.key);
             var op = flip(line.style('opacity'));
@@ -133,6 +134,8 @@ function add_controls(data) {
         })
         .text('remove all');
 
+    regions =d3.nest().key(function(d) { return d.region; }).entries(data);
+    regions.push({'key': 'All'});
     controls.append('div')
         .append('select')
         .attr('id', 'region_select')
@@ -143,7 +146,7 @@ function add_controls(data) {
             update();
         })
         .selectAll('option')
-        .data(d3.nest().key(function(d) { return d.region; }).entries(data))
+        .data(regions)
         .enter()
         .append('option')
         .attr('value',function (d) { return d.key; })
@@ -151,6 +154,8 @@ function add_controls(data) {
 
     controls.select('#region_select').property('value', slideparams[0].region);
 
+    incomes =d3.nest().key(function(d) { return d.income; }).entries(data);
+    incomes.push({'key': 'All'});
     controls.append('div')
         .append('select')
         .attr('id', 'income_select')
@@ -162,7 +167,7 @@ function add_controls(data) {
             update();
         })
         .selectAll('option')
-        .data(d3.nest().key(function(d) { return d.income; }).entries(data))
+        .data(incomes)
         .enter()
         .append('option')
         .attr('value',function (d) { return d.key; })
