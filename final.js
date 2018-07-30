@@ -234,9 +234,9 @@ rightside.append('div')
     .append('button')
     .attr('id', 'about')
     .style("position", 'absolute')
-    .style("left", '1400px')
+    .style("left", '1320')
     .style('top', '400px')
-    .text('About the Visualization')
+    .text('About the Visualization (may need to disable pop-ops...)')
     .on('click', function() {
         alert(essay);
     })
