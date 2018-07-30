@@ -54,8 +54,8 @@ function write_lines(df) {
                              '<p>' + d.year.getFullYear() + '</p>' +
                              '<p>' + d.value + ' sq. km. </p>' +
                              '<p>' + (100 * normalized(d)).toFixed(2) + '% </p>')
-                    .style("left", (d3.event.pageX - 50) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px")
+                    .style("left", (d3.event.pageX - 100) + "px")
+                    .style("top", (d3.event.pageY - 50) + "px")
                 ;
             }
         })
@@ -161,6 +161,7 @@ function add_controls(data) {
         .text(function (d) { return d.key; });
 
     controls.select('#region-select').property('value', slideparams[0].region);
+    d3.select('#region-option-All').property('disabled', true);
 
     incomes =d3.nest().key(function(d) { return d.income; }).entries(data);
     incomes.push({'key': 'All'});
