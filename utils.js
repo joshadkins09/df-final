@@ -150,7 +150,7 @@ function add_controls(data) {
             {
                 d3.select('#income-option-All').property('disabled', false);
             }
-            update();
+            update(true);
         })
         .selectAll('option')
         .data(regions)
@@ -179,7 +179,7 @@ function add_controls(data) {
             {
                 d3.select('#region-option-All').property('disabled', false);
             }
-            update();
+            update(true);
         })
         .selectAll('option')
         .data(incomes)
@@ -197,7 +197,7 @@ function add_controls(data) {
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
-            update();
+            update(true);
         })
         .selectAll('option')
         .data([0, 1000, 10000, 100000, 1000000])
@@ -214,7 +214,7 @@ function add_controls(data) {
         .style('margin-left', '25')
         .style('float', 'left')
         .on('change', function(c) {
-            update();
+            update(true);
         })
         .selectAll('option')
         .data([1000, 10000, 100000, 1000000, 10000000])

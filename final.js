@@ -145,7 +145,9 @@ function set_from_slideindex(index) {
     d3.select('#min-select').property('value', slideparams[index].min);
     d3.select('#max-select').property('value', slideparams[index].max);
     d3.select('#blurb').html(slideparams[index].msg);
-    update();
+    d3.select('#blurbbox').style('opacity', '1');
+    update(false);
+
 }
 
 var tooltip = d3.select("body").append("div")
@@ -156,6 +158,7 @@ var rightside = d3.select("body")
     .append("div");
 
 var blurb = rightside.append('div')
+    .attr("id", "blurbbox")
     .attr("class", "tooltip")
     .style("left", '1250')
     .style("top", '150px')
@@ -255,10 +258,13 @@ d3.json("expand.json", function(error, data) {
     write_lines(df);
 });
 
-function update(update_restore) {
+function update(remove_blurb) {
     d3.json("expand.json", function(error, data) {
         data.forEach(function(d) { d.year = parse_date(d.year); });
 
+        if (remove_blurb) {
+            d3.select('#blurbbox').style('opacity', '0');
+        }
         filts = get_filts();
         var df = data
             .filter(function(e) { return filts.region == 'All' || e.region === filts.region; })
