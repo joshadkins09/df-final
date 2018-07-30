@@ -236,7 +236,7 @@ rightside.append('div')
     .style("position", 'absolute')
     .style("left", '1320')
     .style('top', '400px')
-    .text('About the Visualization (may need to disable pop-ops...)')
+    .text('About the Visualization (may need to disable pop-ups...)')
     .on('click', function() {
         alert(essay);
     })
